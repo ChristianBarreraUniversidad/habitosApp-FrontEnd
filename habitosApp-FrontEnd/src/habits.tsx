@@ -20,6 +20,8 @@ export default function Habits({ habits }: HabitsProps) {
                 {habits.map((habit:Habit) => (
                     <li className={`flex items-center justify-between p-4 mb-2 rounded-lg bg-gray-100`} key={habit._id}>
                         <span className="text-black">{habit.title}</span>
+                        <progress id="file" max="100" value="70">70%</progress>
+                        <button name="button">Click me</button>
                     </li>
                 ))}
             </ul>
