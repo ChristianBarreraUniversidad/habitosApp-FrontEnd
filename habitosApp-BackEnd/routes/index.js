@@ -38,4 +38,53 @@ router.delete('/habits/:id', async (req, res) => {
   }
 });
 
+router.put('/habits/:id', async (req, res) => {
+  try {
+    const { title, description } = req.body;
+
+    const habit = await Habit.findByIdAndUpdate(
+      req.params.id,
+      { title, description },
+      { new: true }
+    );
+
+    res.json(habit);
+  } catch (err) {
+    res.status(400).json({ error: err.message || 'Failed to update habit' });
+  }
+});
+
+router.patch('/habits/markasdone/:id', async (req, res) => {
+  try {
+    const habit = await Habit.findById(req.params.id);
+    habit.lastDone = new Date();
+    if(timeDifferenceInHours(habit.lastDone, habit.lastUpdate) < 24){
+      habit.days = timeDifferenceInDays(habit.lastDone, habit.startedAt);
+      habit.lastUpdate = new Date();
+      await habit.save(); 
+      res.status(200).json({'message': 'Habit marked as done'});
+    } else {
+      habit.days = 0;
+      habit.lastUpdate = new Date();
+      habit.startedAt = new Date();
+      await habit.save();
+      res.status(200).json({'message': 'Habit restarted'});
+    }
+  } catch(err) {
+    console.log(err);
+    res.status(500).json({ message: 'Habit not found' });
+  }
+});
+
+function timeDifferenceInHours(date1, date2) {
+  const diffInMs = Math.abs(date1 - date2);
+  return diffInMs / (1000 * 60 * 60);
+}
+
+function timeDifferenceInDays(date1, date2) {
+  const diffInMs = Math.abs(date1 - date2);
+  return Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+}
+
+
 module.exports = router;

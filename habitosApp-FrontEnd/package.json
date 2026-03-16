@@ -12,6 +12,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.11.2",
     "@tailwindcss/vite": "^4.2.1",
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "i": "^0.3.7",
     "react": "^19.2.0",
