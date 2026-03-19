@@ -48,8 +48,10 @@ router.post('/login', async function(req, res, next) {
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
     res.cookie('habitToken', token, { 
-      httpOnly: false, secure: process.env.NODE_ENV === 'production', 
-      sameSite: 'Strict', maxAge: 7 * (24) * 60 * 60 * 1000 
+      httpOnly: false,
+      secure: false,
+      sameSite: 'lax', 
+      maxAge: 7 * (24) * 60 * 60 * 1000 
     });
     res.json({ message: 'Login successful', token });
   } catch (error) {

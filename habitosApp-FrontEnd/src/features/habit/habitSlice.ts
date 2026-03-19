@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { fetchHabits, markAsDone } from './habitAPI';
+import { fetchAddHabit, fetchHabits, markAsDone } from './habitAPI';
 
 type Habit = {
     _id: string;
@@ -26,12 +26,12 @@ type markAsDoneThunkParams = {
     habitId: string;
 }
 
-export const fetchHabitThunk = createAsyncThunk('habits/fetchHabits',async () => { 
-    return await fetchHabits(); }
+export const fetchHabitThunk = createAsyncThunk('habits/fetchHabits',async (token: string) => { 
+    return await fetchHabits(token); }
 );
 
-export const markAsDoneThunk = createAsyncThunk("habit/markAsDone", async ({habitId}:markAsDoneThunkParams, { rejectWithValue }) => {
-    const responseJson = await markAsDone(habitId);
+export const markAsDoneThunk = createAsyncThunk("habit/markAsDone", async ({habitId, token}: markAsDoneThunkParams & { token: string }, { rejectWithValue }) => {
+    const responseJson = await markAsDone(habitId, token);
     console.log(responseJson);
     if (responseJson.message === "Habit marked as done") {
         return "Habito marcado como hecho";
@@ -40,6 +40,12 @@ export const markAsDoneThunk = createAsyncThunk("habit/markAsDone", async ({habi
     } else {
         return rejectWithValue("Failed to mark habit as done");
     }
+});
+
+export const fetchAddHabitThunk = createAsyncThunk('habits/addHabit', async ({token, title, description}: { token: string, title: string, description: string, days?: number }) => {
+    const response = await fetchAddHabit(token, title, description);
+    const responseJson = await response.json();
+    return responseJson;
 });
 
 const habitSlice = createSlice({
