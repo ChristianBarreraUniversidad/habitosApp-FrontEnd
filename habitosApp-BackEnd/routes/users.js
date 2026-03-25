@@ -47,12 +47,16 @@ router.post('/login', async function(req, res, next) {
     }
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const isProduction = process.env.NODE_ENV === 'production';
+    
     res.cookie('habitToken', token, { 
       httpOnly: false,
-      secure: false,
-      sameSite: 'lax', 
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax', 
       maxAge: 7 * (24) * 60 * 60 * 1000 
     });
+
+
     res.json({ message: 'Login successful', token });
   } catch (error) {
     res.status(500).json({ message: 'Error logging in', "description":error.toString() });
