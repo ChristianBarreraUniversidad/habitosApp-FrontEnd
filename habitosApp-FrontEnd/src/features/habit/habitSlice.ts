@@ -63,6 +63,11 @@ const habitSlice = createSlice({
                 const id = action.meta.arg.habitId;
                 state.status[id] = 'succeeded';
                 state.error[id] = action.payload as string;
+                const habit = state.habits.find(h => h._id === id);
+                if (habit) {
+                    habit.days += 1;
+                    habit.lastDone = new Date(); 
+                }
             }).addCase(markAsDoneThunk.rejected, (state, action) => {
                 state.status [action.meta.arg.habitId] = 'failed';
                 state.error [action.meta.arg.habitId] = action.payload as string;

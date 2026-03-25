@@ -17,11 +17,13 @@ type HabitsProps = {
   habits: Habit[];
 };
 
-const handleMarkAsDone = (habitId: string, dispatch: AppDispatch, token: string) => {
-  dispatch(markAsDoneThunk({ habitId, token }));
-  if (token) {
-    dispatch(fetchHabitThunk(token));
-  }
+const handleMarkAsDone = async (habitId: string, dispatch: AppDispatch, token: string) => {
+    try {
+        await dispatch(markAsDoneThunk({ habitId, token })).unwrap();
+        console.log("Hábito actualizado con éxito");
+    } catch (error) {
+        console.error("Error al marcar el hábito:", error);
+    }
 };
 
 export default function Habits({ habits }: HabitsProps) {
