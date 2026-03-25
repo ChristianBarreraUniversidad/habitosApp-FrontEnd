@@ -85,13 +85,13 @@ router.patch('/habits/markasdone/:id', authenticateToken, async (req, res) => {
       return res.status(404).json({ message: 'Habit not found' });
     }
     habit.lastDone = new Date();
-    if(timeDifferenceInHours(habit.lastDone, habit.lastUpdate) < 24){
-      habit.days = timeDifferenceInDays(habit.lastDone, habit.startedAt);
+    if(timeDifferenceInHours(habit.lastDone, habit.lastUpdate || new Date()) < 24){
+      habit.days = (habit.days || 0) + 1;
       habit.lastUpdate = new Date();
       await habit.save(); 
       res.status(200).json({'message': 'Habit marked as done'});
     } else {
-      habit.days = 0;
+      habit.days = (habit.days || 0) + 1;
       habit.lastUpdate = new Date();
       habit.startedAt = new Date();
       await habit.save();
